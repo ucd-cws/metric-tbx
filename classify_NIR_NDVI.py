@@ -17,7 +17,7 @@ from arcpy.sa import *
 # 3: agriculture
 
 
-def classify_nir_ndvi(NDVI_Raster, NDVI_threshold, NIR_Raster, NIR_threshold, output):
+def classify_nir_ndvi(NDVI_Raster, NDVI_threshold, NIR_Raster, NIR_threshold):
 	# let's deal with the NDVI raster first
 	# need to set null value for ndvi raster
 	ndvi_null = SetNull(Raster(NDVI_Raster) == 0, Raster(NDVI_Raster))
@@ -30,9 +30,7 @@ def classify_nir_ndvi(NDVI_Raster, NDVI_threshold, NIR_Raster, NIR_threshold, ou
 	# combine both raster products and save
 	out = Con(IsNull(nir_out), ndvi_out, nir_out)
 
-	#save
-	out.save(output)
-	return
+	return out
 
 
 #####
@@ -57,7 +55,8 @@ try:
 		raise ValueError("license is unavailable")
 
 	arcpy.AddMessage("Processing")
-	classify_nir_ndvi(os.path.join(folder, NDVI), ndvi_thresh, os.path.join(folder, NIR), nir_thresh, os.path.join(folder, "test.tif"))
+	saver = classify_nir_ndvi(os.path.join(folder, NDVI), ndvi_thresh, os.path.join(folder, NIR), nir_thresh)
+	saver.save(os.path.join(folder, "test.tif"))
 	arcpy.AddMessage("Saving")
 
 except:
