@@ -5,8 +5,7 @@
 # Created: 7/20/2015
 # ---------------------------------------------------------------------------------------------------
 
-import arcpy
-import os
+import arcpy, os, glob
 from arcpy import env
 from arcpy.sa import *
 
@@ -42,33 +41,39 @@ def classify_nir_ndvi(NDVI_Raster, NDVI_threshold, NIR_Raster, NIR_threshold):
 	return out
 
 
-#####
-#examples
+def mosaic_classified(raster_list, output):
+	"""
+	:param raster_list: list of classified rasters to join
+	:param output: path for the mosaic'ed raster
+	:return:
+	"""
 
-# temp local variables.... to be filled in by tool or cmd line
-folder = r"C:\Users\Andy\Desktop\examples\P43_R34_2015_185"
-NIR = r"images\LC80430342015185LGN00_B5.TIF"
-NDVI = r"products\ndvi_07042015_P43R34_L8_F15.img"
+	# split output destination
+	location, name = os.path.split(output)
+
+	# mosaic all rasters in raster list using the blend method.
+	arcpy.MosaicToNewRaster_management(raster_list, location, name, "#", "#", "#", "1", "BLEND", "#")
 
 
-# thresholds
-nir_thresh = 0.3
-ndvi_thresh = 0.15
-# checkout license
+def get_rasters(input_folder):
+	"""
+	:param input_folder: processed LANDSAT image folder path that contains NDVI and Reflectance Surface in products folder
+	:return: NDVI and NIR paths as a list
+	"""
+	# find ndvi image path in folder
+	ndvi_list = glob.glob(os.path.join(input_folder, 'products/ndvi_*.img'))
+	# find reflectance surface image path in folder
+	reflect_surf_list = glob.glob(os.path.join(input_folder, 'products/reflectance_surf_*.img'))
 
-try:
-	if arcpy.CheckExtension("Spatial") == "Available":
-		arcpy.CheckOutExtension("Spatial")
+	if len(ndvi_list) == 1 and len(reflect_surf_list) == 1:  # check lengths of list
+		ndvi = ndvi_list[0]
+		reflect_surf = reflect_surf_list[0]
+		# near infared is band # 5
+		nir = os.path.join(reflect_surf, "Layer_5")
+
 	else:
-		# Raise a custom exception
-		raise ValueError("license is unavailable")
+		raise ValueError("Bad match for NDVI and/or NIR raster in: %s . "
+		                 "Make sure they are in the products folder." % input_folder)
 
-	arcpy.AddMessage("Processing")
-	saver = classify_nir_ndvi(os.path.join(folder, NDVI), ndvi_thresh, os.path.join(folder, NIR), nir_thresh)
-	saver.save(os.path.join(folder, "test.tif"))
-	arcpy.AddMessage("Saving")
+	return ndvi, nir
 
-except:
-	print arcpy.GetMessages(2)
-finally:
-	arcpy.CheckInExtension("Spatial")
