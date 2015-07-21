@@ -113,7 +113,9 @@ class extract(object):
 		# todo check if Spatial is available
 		"""Allow the tool to execute, only if the ArcGIS Spatial Analyst extension is available."""
 		try:
-			if arcpy.CheckExtension("Spatial") != "Available":
+			if arcpy.CheckExtension("Spatial") == "Available":
+				arcpy.CheckOutExtension("Spatial")
+			else:
 				raise Exception
 		except Exception:
 			return False  # tool cannot be executed
@@ -158,7 +160,7 @@ class tabulate(object):
 		                             datatype='DERasterDataset', multiValue='True')
 
 		output = arcpy.Parameter(name='output', displayName="Location for output",
-		                         datatype='DEWorkspace', direction='Output')
+		                          datatype='DEWorkspace', direction='Input')
 
 		regions = arcpy.Parameter(name='regions', displayName="CVPM regions",
 		                       datatype='GPFeatureLayer')
@@ -182,7 +184,9 @@ class tabulate(object):
 		# todo check if Spatial is available
 		"""Allow the tool to execute, only if the ArcGIS Spatial Analyst extension is available."""
 		try:
-			if arcpy.CheckExtension("Spatial") != "Available":
+			if arcpy.CheckExtension("Spatial") == "Available":
+				arcpy.CheckOutExtension("Spatial")
+			else:
 				raise Exception
 		except Exception:
 			return False  # tool cannot be executed
@@ -195,6 +199,7 @@ class tabulate(object):
 		masked_imgs = parameters[0].valueAsText.split(';')
 		output_folder = parameters[1].valueAsText
 		regions = parameters[2].valueAsText
+		region_zone_field = parameters[3].valueAsText
 
 		arcpy.AddMessage("Starting Processing...")
 
