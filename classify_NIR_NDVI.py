@@ -89,7 +89,7 @@ def main(folderlist, output, ndvi_thresh, nir_thresh):
 		class_list =[]
 
 		for folder in folderlist:
-			arcpy.AddMessage("Processing: %s" folder)
+			arcpy.AddMessage("Processing: %s" % folder)
 			rasters = get_rasters(folder)
 			ndvi, nir = rasters[0], rasters[1]
 			saver = classify_nir_ndvi(ndvi, ndvi_thresh, nir, nir_thresh)
