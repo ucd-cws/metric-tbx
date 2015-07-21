@@ -96,7 +96,7 @@ class extract(object):
 		                             datatype='DERasterDataset', multiValue='True')
 
 		output = arcpy.Parameter(name='output', displayName="Location for output",
-		                         datatype='DEWorkspace', direction='Output')
+		                         datatype='DEWorkspace', direction='Input')
 
 		mask = arcpy.Parameter(name='mask', displayName="Agriculture Mask",
 		                       datatype='GPFeatureLayer')
