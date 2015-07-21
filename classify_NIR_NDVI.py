@@ -10,24 +10,33 @@ import os
 from arcpy import env
 from arcpy.sa import *
 
+# make sure to checkout 'Spatial' extension license
+
 
 # classified values
 # 1: water
 # 2: fallow
 # 3: agriculture
 
-
 def classify_nir_ndvi(NDVI_Raster, NDVI_threshold, NIR_Raster, NIR_threshold):
+	"""
+	:param NDVI_Raster: normalized difference vegetation index
+	:param NDVI_threshold: NDVI threshold for determining fallow vs agriculture
+	:param NIR_Raster: Near-infrared (band #5) reflectance band
+	:param NIR_threshold: threshold for determining water
+	:return: Classified raster with 3 classes: 1=water, 2=fallow, 3=agriculture
+	"""
+
 	# let's deal with the NDVI raster first
 	# need to set null value for ndvi raster
 	ndvi_null = SetNull(Raster(NDVI_Raster) == 0, Raster(NDVI_Raster))
-	ndvi_out = Con(ndvi_null < NDVI_threshold, 2, 3)  # conditional
+	ndvi_out = Con(ndvi_null < NDVI_threshold, 2, 3)  # conditional statement
 
 	# Now let's deal with the NIR
 	nir_null = SetNull(Raster(NIR_Raster) == 0, Raster(NIR_Raster))
-	nir_out = Con(nir_null < NIR_threshold, 1)  # conditional
+	nir_out = Con(nir_null < NIR_threshold, 1)  # conditional statement
 
-	# combine both raster products and save
+	# combine both raster products
 	out = Con(IsNull(nir_out), ndvi_out, nir_out)
 
 	return out
