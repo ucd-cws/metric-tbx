@@ -50,4 +50,4 @@ try:
 	import meta
 	meta.write_metadata(output, folderlist, ndvi_thresh, nir_thresh)
 except:
-	raise ValueError("Unable to automatically generate metadata for ouput file.")
+	raise ValueError("Unable to automatically generate metadata for output file.")

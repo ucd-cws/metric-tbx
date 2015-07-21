@@ -11,7 +11,6 @@ from arcpy.sa import *
 
 # make sure to checkout 'Spatial' extension license
 
-
 # classified values
 # 1: water
 # 2: fallow
@@ -77,3 +76,38 @@ def get_rasters(input_folder):
 
 	return ndvi, nir
 
+
+def main(folderlist, output, ndvi_thresh, nir_thresh):
+
+	try:
+		if arcpy.CheckExtension("Spatial") == "Available":
+			arcpy.CheckOutExtension("Spatial")
+		else:
+			# Raise a custom exception
+			raise ValueError("license is unavailable")
+
+		class_list =[]
+
+		for folder in folderlist:
+			arcpy.AddMessage("Processing: %s" folder)
+			rasters = get_rasters(folder)
+			ndvi, nir = rasters[0], rasters[1]
+			saver = classify_nir_ndvi(ndvi, ndvi_thresh, nir, nir_thresh)
+			class_list.append(saver)
+
+		#print class_list
+		arcpy.AddMessage("Saving")
+		mosaic_classified(class_list, output)
+
+	except:
+		print arcpy.GetMessages(2)
+	finally:
+		arcpy.CheckInExtension("Spatial")
+
+	# try writing meta data
+	try:
+		import meta
+		meta.write_metadata(output, folderlist, ndvi_thresh, nir_thresh)
+	except:
+		raise ValueError("Unable to automatically generate metadata for output file.")
+		pass
