@@ -14,7 +14,7 @@ class Toolbox(object):
 	def __init__(self):
 		"""Define the toolbox (the name of the toolbox is the name of the
 		.pyt file)."""
-		self.label = "Toolbox"
+		self.label = "MetricTools"
 		self.alias = ""
 
 		# List of tool classes associated with this toolbox
@@ -207,7 +207,8 @@ class tabulate(object):
 			arcpy.AddMessage(image)
 
 			#save
-			base, name = os.path.split(image)
+			base, nameext = os.path.split(image)
+			name, ext = os.path.splitext(nameext)
 			output_table = os.path.join(output_folder, name + ".dbf")
 			arcpy.AddMessage("Saving: %s" % output_table)
 

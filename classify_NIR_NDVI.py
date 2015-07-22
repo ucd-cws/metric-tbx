@@ -110,4 +110,4 @@ def main(folderlist, output, ndvi_thresh, nir_thresh):
 		meta.write_metadata(output, folderlist, ndvi_thresh, nir_thresh)
 	except:
 		raise ValueError("Unable to automatically generate metadata for output file.")
-		pass
+
