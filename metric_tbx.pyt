@@ -209,7 +209,7 @@ class tabulate(object):
 			#save
 			base, nameext = os.path.split(image)
 			name, ext = os.path.splitext(nameext)
-			output_table = os.path.join(output_folder, name + ".txt")
+			output_table = os.path.join(output_folder, name + ".dbf")
 			arcpy.AddMessage("Saving: %s" % output_table)
 
 			#Tabulate area
